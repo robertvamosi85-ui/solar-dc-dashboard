@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 MW Solar Park — AI Data Centre Business Case</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: #0b0f17;
+    color: #dde2ee;
+    padding: 36px 28px;
+    max-width: 1140px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .header-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #4ade80;
+    margin-bottom: 6px;
+  }
+  h1 { font-size: 21px; font-weight: 700; color: #f0f4ff; margin-bottom: 5px; }
+  .header-sub { font-size: 12px; color: #6b7280; margin-bottom: 30px; }
+
+  .logic-box {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-left: 3px solid #4ade80;
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+    font-size: 12.5px;
+    color: #9ca3af;
+    line-height: 1.8;
+  }
+  .logic-box strong { color: #f0f4ff; }
+
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 28px; }
+  @media (max-width: 700px) { .cards { grid-template-columns: 1fr; } }
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+  .card-b { border-top: 3px solid #60a5fa; }
+  .card-c { border-top: 3px solid #4ade80; }
+  .card-header { padding: 14px 18px 12px; border-bottom: 1px solid #1f2937; }
+  .card-scenario { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 4px; }
+  .card-b .card-scenario { color: #60a5fa; }
+  .card-c .card-scenario { color: #4ade80; }
+  .card-title { font-size: 14px; font-weight: 700; color: #f0f4ff; }
+  .card-subtitle { font-size: 11px; color: #6b7280; margin-top: 3px; line-height: 1.4; }
+  .card-body { padding: 16px 18px; flex: 1; }
+
+  .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #374151; margin-bottom: 8px; margin-top: 14px; }
+  .section-label:first-child { margin-top: 0; }
+
+  .power-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 11px; }
+  .power-source { color: #6b7280; width: 48px; flex-shrink: 0; }
+  .power-bar { height: 18px; border-radius: 3px; display: flex; align-items: center; padding: 0 8px; flex-shrink: 0; }
+  .power-bar span { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; white-space: nowrap; }
+  .bar-solar { background: #f59e0b; } .bar-solar span { color: #0b0f17; }
+  .bar-bess { background: #818cf8; } .bar-bess span { color: #0b0f17; }
+  .bar-grid { background: #4ade80; } .bar-grid span { color: #0b0f17; }
+  .bar-off { background: #1f2937; } .bar-off span { color: #6b7280; }
+
+  .metric { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 1px solid #141c2a; font-size: 12px; gap: 8px; }
+  .metric:last-child { border-bottom: none; }
+  .mname { color: #6b7280; line-height: 1.4; flex-shrink: 1; }
+  .mval { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; text-align: right; line-height: 1.4; flex-shrink: 0; }
+  .green { color: #4ade80; } .amber { color: #f59e0b; } .blue { color: #60a5fa; } .red { color: #f87171; } .gray { color: #9ca3af; } .white { color: #f0f4ff; }
+
+  .highlight-box { border-radius: 6px; padding: 10px 12px; margin-top: 10px; }
+  .hb-b { background: #0c1a2e; border: 1px solid #1e3a5f; }
+  .hb-c { background: #052e16; border: 1px solid #166534; }
+  .hb-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; padding: 3px 0; }
+  .hb-label { color: #9ca3af; }
+  .hb-val { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 13px; }
+
+  .warn-box { margin-top: 10px; padding: 9px 11px; background: #140e0e; border: 1px solid #3b1f1f; border-radius: 5px; font-size: 11px; color: #9ca3af; line-height: 1.6; }
+  .warn-box strong { color: #f87171; }
+  .note-box { margin-top: 10px; padding: 9px 11px; background: #0d1520; border: 1px solid #1f2937; border-radius: 5px; font-size: 10.5px; color: #6b7280; line-height: 1.6; }
+  .note-box strong { color: #9ca3af; }
+
+  .compare-wrap { background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 22px; margin-bottom: 24px; overflow-x: auto; }
+  .compare-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #4b5563; margin-bottom: 18px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th { padding: 8px 12px; border-bottom: 2px solid #1f2937; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; text-align: center; }
+  thead th:first-child { text-align: left; color: #4b5563; }
+  th.col-b { color: #60a5fa; } th.col-c { color: #4ade80; } th.col-base { color: #6b7280; }
+  tbody tr:hover { background: #0f1622; }
+  td { padding: 8px 12px; border-bottom: 1px solid #111827; vertical-align: top; line-height: 1.5; }
+  tbody tr:last-child td { border-bottom: none; }
+  td:first-child { color: #9ca3af; font-size: 12px; }
+  td.num { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11.5px; text-align: center; }
+  tr.section-row td { background: #0d1520; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #374151; padding: 6px 12px; border-bottom: 1px solid #1a2235; }
+  tr.total-row td { border-top: 2px solid #1f2937; font-weight: 700; font-size: 13px; padding-top: 10px; padding-bottom: 10px; }
+  tr.total-row td:first-child { color: #f0f4ff; }
+
+  .profit-section { background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 22px; margin-bottom: 24px; }
+  .pbar-group { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .pbar-label { font-size: 12px; color: #9ca3af; width: 220px; flex-shrink: 0; line-height: 1.4; }
+  .pbar-track { flex: 1; height: 24px; background: #1a2235; border-radius: 4px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; min-width: 36px; }
+  .pbar-text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; color: #0b0f17; white-space: nowrap; }
+  .pbar-right { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; width: 110px; text-align: right; flex-shrink: 0; }
+
+  .verdict-wrap { background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 22px; }
+  .verdict-row { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid #141c2a; font-size: 12.5px; color: #9ca3af; line-height: 1.75; align-items: flex-start; }
+  .verdict-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .badge { flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; margin-top: 3px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+  .badge-b { background: #0c1a2e; color: #60a5fa; border: 1px solid #1e3a5f; }
+  .badge-c { background: #052e16; color: #4ade80; border: 1px solid #166534; }
+  .badge-warn { background: #140e0e; color: #f87171; border: 1px solid #3b1f1f; }
+  .verdict-row strong { color: #f0f4ff; }
+
+  .kb-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 13px; height: 13px; border-radius: 50%;
+    background: #1f2937; color: #6b7280;
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-style: italic; font-weight: 700;
+    border: none; cursor: pointer; margin-left: 5px; padding: 0; vertical-align: middle;
+    transition: background 0.15s, color 0.15s; flex-shrink: 0;
+  }
+  .kb-btn:hover, .kb-btn.open { background: #9ca3af; color: #0b0f17; }
+  .card-b .kb-btn:hover, .card-b .kb-btn.open { background: #60a5fa; }
+  .card-c .kb-btn:hover, .card-c .kb-btn.open { background: #4ade80; }
+  .kb-panel {
+    font-size: 11px; color: #9ca3af; line-height: 1.65;
+    background: #0d1520; border-left: 2px solid #374151;
+    padding: 8px 10px; margin: 2px 0 9px 0; border-radius: 0 4px 4px 0;
+  }
+  .kb-panel strong { color: #dde2ee; }
+  .kb-toggle-all {
+    font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #6b7280; background: none; border: 1px solid #1f2937; border-radius: 4px;
+    padding: 4px 8px; cursor: pointer; margin-bottom: 12px; display: inline-block;
+  }
+  .kb-toggle-all:hover { color: #dde2ee; border-color: #374151; }
+  .concepts-wrap { background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 22px; margin-bottom: 24px; }
+  .concept-item { border-bottom: 1px solid #141c2a; padding: 10px 0; }
+  .concept-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .concept-q { display: flex; align-items: center; font-size: 12.5px; color: #dde2ee; font-weight: 600; cursor: pointer; }
+  .concept-q .kb-btn { margin-left: 7px; }
+
+  .footnote { margin-top: 22px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #374151; line-height: 1.8; border-top: 1px solid #1a2235; padding-top: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header-tag">10 MW Hungarian Solar Park · Co-Located AI Data Centre</div>
+<h1>How Much AI Can You Buy — and What Does It Cost?</h1>
+<div class="header-sub">Two 24/7 power configurations for the same 10 MW solar park. Click the (i) next to any line for the methodology behind it.</div>
+
+<div class="logic-box">
+  <strong>Two ways to run AI compute 24/7 on this park's solar output:</strong> Scenario B is fully off-grid — solar plus a battery sized to firm the park's own annual average output, with no grid connection at all. Scenario C blends solar, a smaller battery, and a grid connection to support a larger facility, paying for grid electricity during the hours solar and battery can't cover. Both are priced on the same basis: GPU servers at €35,000–55,000 per unit (2026 new-hardware pricing) and operating costs at an explicit €1,000 per GPU per year.
+</div>
+
+<div class="cards">
+
+  <!-- SCENARIO B -->
+  <div class="card card-b">
+    <div class="card-header">
+      <div class="card-scenario">Scenario B</div>
+      <div class="card-title">Solar + Battery — No Grid</div>
+      <div class="card-subtitle">Data centre runs 24/7. Sized to the park's average sustained output. Battery bridges nights.</div>
+    </div>
+    <div class="card-body">
+
+      <button class="kb-toggle-all" data-state="closed">ⓘ Show all notes</button>
+
+      <div class="section-label">Power sources</div>
+      <div class="power-row"><div class="power-source">Solar</div><div class="power-bar bar-solar" style="width:200px"><span>daytime — also charges battery</span></div></div>
+      <div class="power-row"><div class="power-source">Battery</div><div class="power-bar bar-bess" style="width:180px"><span>releases power at night</span></div></div>
+      <div class="power-row"><div class="power-source">Grid</div><div class="power-bar bar-off" style="width:80px"><span>none</span></div></div>
+
+      <div class="section-label">Power reality</div>
+      <div class="metric"><span class="mname">Park annual average output (the firm number) <button class="kb-btn" data-kb="b-avg" aria-label="Show methodology note">i</button></span><span class="mval blue">~1.37 MW</span></div>
+      <div class="kb-panel" id="kb-b-avg" hidden>= 12,000 MWh &divide; 8,760 hours &asymp; 1.37 MW &mdash; the park's energy spread evenly across every hour of the year, day and night. Useless to a computer needing power right now at 2am in January on its own, but exactly the number a battery can deliver continuously if it perfectly time-shifts daytime surplus into nighttime supply.</div>
+      <div class="metric"><span class="mname">Battery size needed (real-world benchmark) <button class="kb-btn" data-kb="b-battery" aria-label="Show methodology note">i</button></span><span class="mval red">60–70 MWh<br><span style="font-size:10px;color:#6b7280">Crusoe Nevada: 63 MWh for 1 MW firm</span></span></div>
+      <div class="kb-panel" id="kb-b-battery" hidden>Benchmarked directly against the one real operating example that matches this setup: Crusoe + Redwood Materials in Nevada, which uses 63 MWh of batteries (built from second-life EV battery packs) to firm 1 MW of continuous, off-grid AI compute from a 12 MW solar array. Scaled to this park's ~1.35&ndash;1.37 MW target, that lands at 60&ndash;70 MWh &mdash; not a theoretical derivation, but the proven real-world ratio scaled proportionally.</div>
+      <div class="metric"><span class="mname">Hungarian winter adjustment needed <button class="kb-btn" data-kb="b-winter" aria-label="Show methodology note">i</button></span><span class="mval red">+15–20% more storage<br><span style="font-size:10px;color:#6b7280">less sun than Nevada</span></span></div>
+      <div class="kb-panel" id="kb-b-winter" hidden>+15&ndash;20% added on top of the Crusoe benchmark, because Hungary's winters have weaker, shorter sun than Nevada's &mdash; more storage buffer is needed to survive multi-day cloudy stretches in December/January without running the battery dry.</div>
+      <div class="metric"><span class="mname">Hours with usable power per year</span><span class="mval blue">8,760 hrs — 24/7</span></div>
+
+      <div class="section-label">Data centre sizing</div>
+      <div class="metric"><span class="mname">Data centre sized to park average output <button class="kb-btn" data-kb="b-sizing" aria-label="Show methodology note">i</button></span><span class="mval white">~1.35 MW IT load</span></div>
+      <div class="kb-panel" id="kb-b-sizing" hidden>With a battery acting as a perfect time-shifter &mdash; storing midday surplus, releasing it at night &mdash; a data centre running continuously at the park's own energy average (1.35&ndash;1.37 MW) draws exactly what the park produces over a full year, no more, no less. Size it higher and the battery runs dry in winter; size it lower and real capacity goes unused.</div>
+      <div class="metric"><span class="mname">Number of GPUs to buy <button class="kb-btn" data-kb="b-gpucount" aria-label="Show methodology note">i</button></span><span class="mval blue">~950</span></div>
+      <div class="kb-panel" id="kb-b-gpucount" hidden>= 1.35 MW (1,350 kW) &divide; 1.4 kW per GPU &asymp; 950. Each GPU, once you add its share of cooling, networking and power overhead, draws about 1.4 kW continuously.</div>
+      <div class="metric"><span class="mname">GPU utilisation rate <button class="kb-btn" data-kb="b-util" aria-label="Show methodology note">i</button></span><span class="mval blue">~38%<br><span style="font-size:10px;color:#6b7280">marketplace spot assumption</span></span></div>
+      <div class="kb-panel" id="kb-b-util" hidden>Because this scenario runs 24/7, the data centre always has power &mdash; so utilisation here is purely a market-demand question, not a power constraint. On a spot marketplace, a given GPU is only actually rented roughly 38% of the time even though it's powered and available the rest of the time too.</div>
+      <div class="metric"><span class="mname">Where you sell compute <button class="kb-btn" data-kb="b-sell" aria-label="Show methodology note">i</button></span><span class="mval gray" style="font-size:10px;">Spot marketplace or<br>direct AI company contract</span></div>
+      <div class="kb-panel" id="kb-b-sell" hidden>Spot-marketplace rental (Vast.ai/RunPod-style platforms), or a direct multi-year contract with an AI company. A signed anchor customer at a fixed rate &mdash; rather than relying purely on spot pricing &mdash; is the single variable most likely to meaningfully improve this scenario's economics.</div>
+
+      <div class="section-label">Economics</div>
+      <div class="metric"><span class="mname">GPU revenue at 38% utilisation <button class="kb-btn" data-kb="b-revenue" aria-label="Show methodology note">i</button></span><span class="mval blue">~€2.4M/yr</span></div>
+      <div class="kb-panel" id="kb-b-revenue" hidden>= 950 GPUs &times; 8,760 hours &times; 38% utilisation &times; &euro;0.751/effective GPU-hour &asymp; &euro;2.4M/yr (equivalently, &euro;2,500/GPU/yr at 38% utilisation &mdash; the baseline rate used throughout this model).</div>
+      <div class="metric"><span class="mname">Electricity bill</span><span class="mval green">€0</span></div>
+      <div class="metric"><span class="mname">Operating costs (€1,000/GPU/yr) <button class="kb-btn" data-kb="b-opex" aria-label="Show methodology note">i</button></span><span class="mval red">€0.95M/yr</span></div>
+      <div class="kb-panel" id="kb-b-opex" hidden>= 950 GPUs &times; &euro;1,000/GPU/yr &mdash; an explicit per-GPU rule covering staff, day-to-day maintenance and insurance (the marketplace's ~15&ndash;20% commission is already netted out on the revenue side, so it isn't double-counted here).</div>
+      <div class="metric"><span class="mname">Annual profit (EBITDA) <button class="kb-btn" data-kb="b-ebitda" aria-label="Show methodology note">i</button></span><span class="mval blue">€1.45M/yr</span></div>
+      <div class="kb-panel" id="kb-b-ebitda" hidden>Revenue (&euro;2.4M) &minus; operating costs (&euro;0.95M) = &euro;1.45M/yr. No electricity bill to subtract, which is the main reason B's EBITDA is the highest of the two scenarios modelled here.</div>
+
+      <div class="highlight-box hb-b">
+        <div class="hb-row"><span class="hb-label">GPUs to buy</span><span class="hb-val blue">~950</span></div>
+        <div class="hb-row"><span class="hb-label">Cost per GPU (all-in server)</span><span class="hb-val blue">€35–55K</span></div>
+        <div class="hb-row"><span class="hb-label">GPUs (950 × €35–55K)</span><span class="hb-val red">€33.3–52.3M</span></div>
+        <div class="hb-row"><span class="hb-label">Battery (70 MWh × €180/kWh)</span><span class="hb-val red">€9–15M</span></div>
+        <div class="hb-row"><span class="hb-label">Data centre infrastructure</span><span class="hb-val blue">€3–5M</span></div>
+        <div class="hb-row" style="border-top:1px solid #1e3a5f; margin-top:5px; padding-top:5px;"><span class="hb-label">Total AI Capex <button class="kb-btn" data-kb="b-capex" aria-label="Show methodology note">i</button></span><span class="hb-val blue">€45.3–72.3M</span></div>
+      </div>
+      <div class="kb-panel" id="kb-b-capex" hidden>GPUs: 950 &times; &euro;45,000 mid-case (range &euro;35&ndash;55K) &asymp; &euro;33&ndash;52M. Battery: 60&ndash;70 MWh &times; ~&euro;180/kWh installed &asymp; &euro;9&ndash;15M. Infrastructure: ~&euro;3&ndash;5M for the building/power/cooling shell. Total &asymp; &euro;45&ndash;72M, all spent upfront before any revenue arrives.</div>
+
+      <div class="warn-box">
+        <strong>GPU capex dominates the cost stack:</strong> €33–52M of the €45–72M total, against battery and infrastructure combined at only €12–20M. At ~€1.45M/yr EBITDA, payback on total capex runs <strong>~40.5 years</strong> — long, but the better of the two configurations modelled here, and the cleanest economically since there is no grid dependency at all.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCENARIO C -->
+  <div class="card card-c">
+    <div class="card-header">
+      <div class="card-scenario">Scenario C</div>
+      <div class="card-title">Solar + Small Battery + Grid</div>
+      <div class="card-subtitle">Solar covers most of the year. Small battery handles evenings. Grid covers winter nights only.</div>
+    </div>
+    <div class="card-body">
+
+      <button class="kb-toggle-all" data-state="closed">ⓘ Show all notes</button>
+
+      <div class="section-label">Power sources</div>
+      <div class="power-row"><div class="power-source">Solar</div><div class="power-bar bar-solar" style="width:210px"><span>~60% of annual energy</span></div></div>
+      <div class="power-row"><div class="power-source">Battery</div><div class="power-bar bar-bess" style="width:110px"><span>evening bridge</span></div></div>
+      <div class="power-row"><div class="power-source">Grid</div><div class="power-bar bar-grid" style="width:130px"><span>winter nights ~40%</span></div></div>
+
+      <div class="section-label">Power reality</div>
+      <div class="metric"><span class="mname">Total power capacity (solar peak + grid) <button class="kb-btn" data-kb="c-power" aria-label="Show methodology note">i</button></span><span class="mval green">~12 MW available</span></div>
+      <div class="kb-panel" id="kb-c-power" hidden>Solar peak (~9&ndash;10 MW) plus the grid connection together give roughly 12 MW of combined capacity to draw on &mdash; though the data centre itself is sized at only 2 MW, comfortably inside that envelope.</div>
+      <div class="metric"><span class="mname">Battery size needed (evenings only) <button class="kb-btn" data-kb="c-battery" aria-label="Show methodology note">i</button></span><span class="mval green">10–15 MWh<br><span style="font-size:10px;color:#6b7280">vs. 70 MWh in Scenario B</span></span></div>
+      <div class="kb-panel" id="kb-c-battery" hidden>Much smaller than Scenario B's 60&ndash;70 MWh, because this battery only bridges the gap between sunset and whenever evening demand eases &mdash; the grid takes over for the deep overnight and winter gaps that B's battery has to cover entirely alone.</div>
+      <div class="metric"><span class="mname">Hours with usable power per year</span><span class="mval green">8,760 hrs — 24/7</span></div>
+
+      <div class="section-label">Data centre sizing</div>
+      <div class="metric"><span class="mname">Data centre sized to <button class="kb-btn" data-kb="c-sizing" aria-label="Show methodology note">i</button></span><span class="mval white">2 MW IT load</span></div>
+      <div class="kb-panel" id="kb-c-sizing" hidden>Chosen as a size comfortably within the combined solar+grid envelope (~12 MW), large enough to be a meaningful commercial facility without requiring a very large new grid-import approval.</div>
+      <div class="metric"><span class="mname">Number of GPUs to buy <button class="kb-btn" data-kb="c-gpucount" aria-label="Show methodology note">i</button></span><span class="mval green">~1,400</span></div>
+      <div class="kb-panel" id="kb-c-gpucount" hidden>= 2 MW (2,000 kW) &divide; 1.4 kW per GPU &asymp; 1,400. Same power-budget division as Scenario B.</div>
+      <div class="metric"><span class="mname">GPU utilisation rate <button class="kb-btn" data-kb="c-util" aria-label="Show methodology note">i</button></span><span class="mval green">~38%<br><span style="font-size:10px;color:#6b7280">marketplace spot assumption</span></span></div>
+      <div class="kb-panel" id="kb-c-util" hidden>Same logic as Scenario B: power is available 24/7, so 38% reflects market demand on a spot marketplace, not a power constraint.</div>
+      <div class="metric"><span class="mname">Where you sell compute <button class="kb-btn" data-kb="c-sell" aria-label="Show methodology note">i</button></span><span class="mval gray" style="font-size:10px;">Spot marketplace or<br>direct AI company contract</span></div>
+      <div class="kb-panel" id="kb-c-sell" hidden>Same spot-marketplace or direct-contract model as B. With more GPUs than B, an anchor customer matters even more here to avoid relying entirely on volatile spot pricing for a larger fleet.</div>
+
+      <div class="section-label">Economics</div>
+      <div class="metric"><span class="mname">GPU revenue at 38% utilisation <button class="kb-btn" data-kb="c-revenue" aria-label="Show methodology note">i</button></span><span class="mval green">~€3.5M/yr</span></div>
+      <div class="kb-panel" id="kb-c-revenue" hidden>= 1,400 GPUs &times; 8,760 hours &times; 38% &times; &euro;0.751/GPU-hour &asymp; &euro;3.5M/yr &mdash; higher than B simply because there are more GPUs, not because of a better rate or higher utilisation.</div>
+      <div class="metric"><span class="mname">Grid electricity bill (~6,500 MWh × €0.17) <button class="kb-btn" data-kb="c-grid" aria-label="Show methodology note">i</button></span><span class="mval red">−€1.1M/yr</span></div>
+      <div class="kb-panel" id="kb-c-grid" hidden>&asymp; 6,500 MWh/year drawn from the grid (the roughly 40% of annual energy solar plus the small battery can't reach) &times; ~&euro;0.17/kWh commercial rate &asymp; &euro;1.1M/yr. This is the price of running 2 MW instead of capping out near 1 MW like Scenario B &mdash; paying for grid backup roughly doubles the GPU count you can support.</div>
+      <div class="metric"><span class="mname">Operating costs (€1,000/GPU/yr) <button class="kb-btn" data-kb="c-opex" aria-label="Show methodology note">i</button></span><span class="mval red">€1.40M/yr</span></div>
+      <div class="kb-panel" id="kb-c-opex" hidden>= 1,400 GPUs &times; &euro;1,000/GPU/yr. Same rule as Scenario B.</div>
+      <div class="metric"><span class="mname">Annual profit (EBITDA) <button class="kb-btn" data-kb="c-ebitda" aria-label="Show methodology note">i</button></span><span class="mval green">€1.00M/yr</span></div>
+      <div class="kb-panel" id="kb-c-ebitda" hidden>Revenue (&euro;3.5M) &minus; grid bill (&euro;1.1M) &minus; operating costs (&euro;1.4M) = &euro;1.0M/yr. Higher gross revenue than B, but the grid bill and the larger fleet's running costs eat most of the advantage, leaving EBITDA essentially level with B despite 50% more GPUs.</div>
+
+      <div class="highlight-box hb-c">
+        <div class="hb-row"><span class="hb-label">GPUs to buy</span><span class="hb-val green">~1,400</span></div>
+        <div class="hb-row"><span class="hb-label">Cost per GPU (all-in server)</span><span class="hb-val green">€35–55K</span></div>
+        <div class="hb-row"><span class="hb-label">GPUs (1,400 × €35–55K)</span><span class="hb-val red">€49.0–77.0M</span></div>
+        <div class="hb-row"><span class="hb-label">Battery (12 MWh × €180/kWh)</span><span class="hb-val green">€1.5–3M</span></div>
+        <div class="hb-row"><span class="hb-label">Data centre infrastructure</span><span class="hb-val green">€4–7M</span></div>
+        <div class="hb-row"><span class="hb-label">Grid connection upgrade</span><span class="hb-val amber">€0.5–2M</span></div>
+        <div class="hb-row" style="border-top:1px solid #166534; margin-top:5px; padding-top:5px;"><span class="hb-label">Total AI Capex <button class="kb-btn" data-kb="c-capex" aria-label="Show methodology note">i</button></span><span class="hb-val green">€55.0–89.0M</span></div>
+      </div>
+      <div class="kb-panel" id="kb-c-capex" hidden>GPUs: 1,400 &times; &euro;45,000 mid-case (range &euro;35&ndash;55K) &asymp; &euro;49&ndash;77M. Battery: 10&ndash;15 MWh &times; ~&euro;180/kWh &asymp; &euro;1.5&ndash;3M &mdash; much cheaper than B's, since it only covers evenings. Infrastructure &asymp; &euro;4&ndash;7M. Grid connection upgrade: &euro;0.5&ndash;2M, the cost of securing import capacity from the DSO/MAVIR. Total &asymp; &euro;55&ndash;89M.</div>
+
+      <div class="warn-box">
+        <strong>GPU capex dominates here too:</strong> €49–77M of the €55–89M total. At ~€1.0M/yr EBITDA, payback on total capex runs <strong>~72 years</strong> — substantially longer than Scenario B, despite supporting 50% more GPUs, because the larger capex base isn't matched by proportionally higher profit.
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- SIDE BY SIDE TABLE -->
+<div class="compare-wrap">
+  <div class="compare-title">Side-by-Side Comparison</div>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th class="col-b">B<br>Solar + Battery</th>
+        <th class="col-c">C<br>Solar+Battery+Grid</th>
+        <th class="col-base">Plain Solar<br>No data centre</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="section-row"><td colspan="4">Power</td></tr>
+      <tr>
+        <td>Hours running per year</td>
+        <td class="num blue">8,760 hrs<br><span style="font-size:10px;">(24/7)</span></td>
+        <td class="num green">8,760 hrs<br><span style="font-size:10px;">(24/7)</span></td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Battery needed</td>
+        <td class="num red">60–70 MWh</td>
+        <td class="num green">10–15 MWh</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Grid electricity needed</td>
+        <td class="num green">None</td>
+        <td class="num amber">~6,500 MWh/yr</td>
+        <td class="num gray">—</td>
+      </tr>
+
+      <tr class="section-row"><td colspan="4">AI hardware</td></tr>
+      <tr>
+        <td>Data centre size</td>
+        <td class="num blue">~1.35 MW</td>
+        <td class="num green">2 MW</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Number of GPUs to buy</td>
+        <td class="num blue">~950</td>
+        <td class="num green">~1,400</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>GPU utilisation rate</td>
+        <td class="num blue">~38%</td>
+        <td class="num green">~38%</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Cost per GPU (server, all-in)</td>
+        <td class="num blue">€35–55K</td>
+        <td class="num green">€35–55K</td>
+        <td class="num gray">—</td>
+      </tr>
+
+      <tr class="section-row"><td colspan="4">Capex breakdown</td></tr>
+      <tr>
+        <td>GPUs</td>
+        <td class="num blue">€33.3–52.3M</td>
+        <td class="num green">€49.0–77.0M</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Battery</td>
+        <td class="num red">€9–15M</td>
+        <td class="num green">€1.5–3M</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Data centre infrastructure</td>
+        <td class="num blue">€3–5M</td>
+        <td class="num green">€4–7M</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Grid connection upgrade</td>
+        <td class="num green">€0</td>
+        <td class="num amber">€0.5–2M</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr class="total-row">
+        <td>Total AI Capex</td>
+        <td class="num blue" style="font-size:14px;">€45.3–72.3M</td>
+        <td class="num green" style="font-size:14px;">€55.0–89.0M</td>
+        <td class="num gray">€0</td>
+      </tr>
+
+      <tr class="section-row"><td colspan="4">Annual economics</td></tr>
+      <tr>
+        <td>GPU rental revenue</td>
+        <td class="num blue">~€2.4M/yr</td>
+        <td class="num green">~€3.5M/yr</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Solar export revenue</td>
+        <td class="num gray">~€20K/yr<br><span style="font-size:10px;">surplus only</span></td>
+        <td class="num gray">~€30K/yr<br><span style="font-size:10px;">surplus only</span></td>
+        <td class="num gray">€144K/yr<br><span style="font-size:10px;">gross metering, no subsidy</span></td>
+      </tr>
+      <tr>
+        <td>Grid electricity bill</td>
+        <td class="num green">€0</td>
+        <td class="num red">−€1.1M/yr</td>
+        <td class="num gray">—</td>
+      </tr>
+      <tr>
+        <td>Operating costs (€1,000/GPU/yr)</td>
+        <td class="num red">€0.95M/yr</td>
+        <td class="num red">€1.40M/yr</td>
+        <td class="num gray">€80–120K/yr</td>
+      </tr>
+      <tr class="total-row">
+        <td>Annual profit (EBITDA)</td>
+        <td class="num blue" style="font-size:14px;">€1.45M/yr</td>
+        <td class="num green" style="font-size:14px;">€1.00M/yr</td>
+        <td class="num gray" style="font-size:14px;">€25–65K/yr</td>
+      </tr>
+      <tr>
+        <td>Payback on AI Capex</td>
+        <td class="num red">~40.5 yrs</td>
+        <td class="num amber">~72 yrs</td>
+        <td class="num gray">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PROFIT BARS -->
+<div class="profit-section">
+  <div class="compare-title">Annual Profit Comparison (EBITDA)</div>
+
+  <div class="pbar-group">
+    <div class="pbar-label"><strong style="color:#60a5fa">B — Solar + Battery</strong><br>950 GPUs · 24/7 · no grid bill</div>
+    <div class="pbar-track"><div class="pbar-fill" style="width:100%;background:#60a5fa"><span class="pbar-text">€1.45M / year</span></div></div>
+    <div class="pbar-right blue">€1.45M/yr</div>
+  </div>
+
+  <div class="pbar-group">
+    <div class="pbar-label"><strong style="color:#4ade80">C — Solar + Battery + Grid</strong><br>1,400 GPUs · 24/7 · grid bill eats margin</div>
+    <div class="pbar-track"><div class="pbar-fill" style="width:69%;background:#4ade80"><span class="pbar-text">€1.0M / year</span></div></div>
+    <div class="pbar-right green">€1.0M/yr</div>
+  </div>
+
+  <div style="height:1px;background:#1f2937;margin:14px 0;"></div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#374151;margin-bottom:12px;">Plain solar park — no data centre</div>
+
+  <div class="pbar-group">
+    <div class="pbar-label">Plain solar · with KÁT subsidy<br><span style="font-size:10px;color:#6b7280">(if eligible — unlikely for new parks in 2026)</span></div>
+    <div class="pbar-track"><div class="pbar-fill" style="width:45%;background:#4b5563"><span class="pbar-text">€540K / year</span></div></div>
+    <div class="pbar-right gray">€540K/yr</div>
+  </div>
+
+  <div class="pbar-group">
+    <div class="pbar-label">Plain solar · no subsidy<br><span style="font-size:10px;color:#6b7280">gross metering at €0.012/kWh today</span></div>
+    <div class="pbar-track"><div class="pbar-fill" style="width:3%;background:#374151;min-width:38px"><span class="pbar-text">€45K</span></div></div>
+    <div class="pbar-right red">€45K/yr</div>
+  </div>
+</div>
+
+<!-- VERDICT -->
+<div class="verdict-wrap">
+  <div class="compare-title">Plain-Language Verdict</div>
+
+  <div class="verdict-row">
+    <div class="badge badge-b">B</div>
+    <div>Solar + Battery is the cleanest model — fully off-grid, no electricity bill, no DSO approval needed. At ~950 GPUs (1.35 MW), GPU capex of €33–52M dominates the €45–72M total. Annual profit of ~€1.45M/yr gives a payback of <strong>~40.5 years</strong> on total capex — long, but the better of the two configurations modelled here.</div>
+  </div>
+
+  <div class="verdict-row">
+    <div class="badge badge-c">C</div>
+    <div>Solar + Battery + Grid supports 50% more GPUs (~1,400 vs ~950) and higher gross revenue (~€3.5M/yr vs ~€2.4M/yr), but the ~€1.1M/yr grid electricity bill and the larger fleet's own running costs bring EBITDA back down to ~€1.0M/yr — essentially level with Scenario B despite the bigger build. Total capex (€55–89M) is higher than B's, so payback stretches to <strong>~72 years</strong>.</div>
+  </div>
+
+  <div class="verdict-row">
+    <div class="badge badge-warn">Honest</div>
+    <div>Both configurations show payback well beyond a GPU's realistic 3–5 year competitive life — €1.0–1.45M/yr of annual profit doesn't come close to recovering €45–89M of capex inside any sensible hardware-replacement horizon. The variable that matters most going forward isn't battery vs. grid — it's the revenue assumption. Both scenarios rely on ~38% utilisation at spot-marketplace pricing; a <strong>signed anchor customer at a fixed multi-year rate</strong>, even at a modest premium to spot, is the single change most likely to bring payback into a defensible range.</div>
+  </div>
+</div>
+
+<div class="concepts-wrap">
+  <div class="compare-title">Supporting Concepts — background for explaining the model</div>
+  <button class="kb-toggle-all" data-state="closed">ⓘ Show all notes</button>
+  <div class="concept-item">
+    <div class="concept-q">GPU replacement cycle — what's the real standard? <button class="kb-btn" data-kb="concept-replacement" aria-label="Show answer">i</button></div>
+    <div class="kb-panel" id="kb-concept-replacement" hidden>Two different numbers exist, answering different questions. Accounting/book life (what big clouds depreciate hardware over): Amazon, Microsoft, Google ~6 years; Meta ~5 years; CoreWeave 6 years. Real competitive life (when hardware stops being cost-competitive for frontier work): widely cited at 2–3 years, since Nvidia now ships a new architecture roughly every 1–2 years. Hyperscalers bridge the gap by cascading old GPUs down — frontier training years 0–2, inference years 2–4, batch/analytics years 4–6 — a cascade that needs scale and workload diversity a small operator competing on spot marketplaces won't have. A conservative planning assumption here would be 3–5 years, not 6.</div>
+  </div>
+  <div class="concept-item">
+    <div class="concept-q">What's the marketplace's cut? <button class="kb-btn" data-kb="concept-marketplace" aria-label="Show answer">i</button></div>
+    <div class="kb-panel" id="kb-concept-marketplace" hidden>Typically 15–20% on consumer/spot GPU marketplaces like Vast.ai. This commission is already netted out of the €2,500/GPU/yr revenue baseline used throughout this model — it's not a separate cost to add on top.</div>
+  </div>
+  <div class="concept-item">
+    <div class="concept-q">What does "Solar O&M" mean? <button class="kb-btn" data-kb="concept-solar-om" aria-label="Show answer">i</button></div>
+    <div class="kb-panel" id="kb-concept-solar-om" hidden>Operations &amp; Maintenance for the solar park itself, separate from anything to do with the data centre: panel cleaning, inverter repair, vegetation/land upkeep, monitoring software, insurance, minor electrical fixes. Industry rule of thumb: ~€8 per installed kWp per year — for this 10,000 kWp (10 MW) park, that's roughly €80,000/year.</div>
+  </div>
+  <div class="concept-item">
+    <div class="concept-q">Can the battery be built from used EVs? <button class="kb-btn" data-kb="concept-ev-batteries" aria-label="Show answer">i</button></div>
+    <div class="kb-panel" id="kb-concept-ev-batteries" hidden>Real and proven, not theoretical: the Crusoe/Redwood Materials Nevada project (the benchmark behind Scenario B's battery sizing) uses 805 second-life EV battery packs assembled into a 63 MWh system — about 78 kWh per pack on average, roughly the size of a typical Tesla Model S/X pack. Scaling that ratio to a 60–70 MWh need implies roughly 770–900 packs. The open question for Hungary is sourcing — Redwood is a US company, and an equivalent EU/Hungarian second-life EV battery integrator hasn't been identified yet.</div>
+  </div>
+  <div class="concept-item">
+    <div class="concept-q">IaaS vs. MaaS — which business is this? <button class="kb-btn" data-kb="concept-iaas-maas" aria-label="Show answer">i</button></div>
+    <div class="kb-panel" id="kb-concept-iaas-maas" hidden>What this whole model evaluates — buy GPUs, rent raw compute by the hour, the customer runs their own software — is GPU Infrastructure-as-a-Service; a smaller independent provider doing this is industry-called a "neocloud" (CoreWeave, Lambda Labs, Crusoe). The alternative business — running an actual AI model yourself and selling finished output per token — is closer to "Model-as-a-Service" (MaaS) or an inference platform; there's no universally agreed acronym for it. Calling the token-selling model "IaaS" would confuse an engineer, since IaaS already means the GPU-rental model.</div>
+  </div>
+</div>
+
+<div class="footnote">
+  Assumptions: GPU server €45,000/GPU mid-case (range €35,000–55,000) — current 2026 new-hardware pricing for a full 8-GPU server (chassis, CPUs, RAM, networking, cooling share); operating cost €1,000/GPU/year (staff, maintenance, insurance; marketplace commission already netted out of revenue); GPU rental revenue at €2,500/GPU/yr (38% utilisation × €0.751/effective GPU-hour) on a spot marketplace; battery €180/kWh installed mid-case; grid import €0.17/kWh commercial; solar export €0.012/kWh gross metering; solar park O&M €8/kWp/yr. Exchange rate 390 HUF/€. All figures ±30% planning-grade. Excludes financing costs, depreciation, taxes, permitting and GPU replacement cycles.
+</div>
+
+<script>
+(function() {
+  // Knowledge-base info bars: generic toggle handler
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.kb-btn');
+    if (btn) {
+      const panel = document.getElementById('kb-' + btn.dataset.kb);
+      if (panel) {
+        const willShow = panel.hidden;
+        panel.hidden = !willShow;
+        btn.classList.toggle('open', willShow);
+      }
+      return;
+    }
+    const allBtn = e.target.closest('.kb-toggle-all');
+    if (allBtn) {
+      const scope = allBtn.closest('.card, .concepts-wrap');
+      const isOpen = allBtn.dataset.state === 'open';
+      scope.querySelectorAll('.kb-panel').forEach(p => { p.hidden = isOpen; });
+      scope.querySelectorAll('.kb-btn').forEach(b => { b.classList.toggle('open', !isOpen); });
+      allBtn.dataset.state = isOpen ? 'closed' : 'open';
+      allBtn.textContent = isOpen ? 'ⓘ Show all notes' : 'ⓘ Hide all notes';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
